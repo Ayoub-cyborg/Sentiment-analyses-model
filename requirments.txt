@@ -1,0 +1,9 @@
+pandas 
+numpy
+re
+nltk
+sickit-learn
+gensim
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('punkt')
