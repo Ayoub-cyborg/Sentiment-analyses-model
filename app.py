@@ -4,30 +4,29 @@ import pandas as pd
 import numpy as np
 import joblib
 import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Load the model and tokenizer
-#pipe_lr = joblib.load("./models/emotion_classifier_pipe_lr_1.0.1.pkl", "rb")
 pipe_lr = tf.keras.models.load_model('./models/saved_model/my_model')
 tokenizer = joblib.load("./models/tokenizer1.0.1.pkl")
 
 sentiment_labels = ['negative', 'positive']
 
-# Functions
+# Function that gives you the prediction 'positive' or 'negative'
 def predict_emotions(docx):
     sequences = tokenizer.texts_to_sequences([docx])
     padded_sequences = pad_sequences(sequences, maxlen=100)
     results = pipe_lr.predict(padded_sequences)
     # Check if predictions exist
     if results.shape[0] > 0:
-    # Classify the sentiment based on the prediction probabilities
-         classified_sentiment = sentiment_labels[np.argmax(results[0])]
+        # Classify the sentiment based on the prediction probabilities
+        classified_sentiment = sentiment_labels[np.argmax(results[0])]
     else:
-    # Unable to classify se ntiment
-         classified_sentiment = "Unknown"
+        # Unable to classify se ntiment
+        classified_sentiment = "Unknown"
     return classified_sentiment
+
+# Function that gives you the prediction probability for 'positive' and 'negative'
 
 def get_prediction_proba(docx):
     sequences = tokenizer.texts_to_sequences([docx])
@@ -37,9 +36,6 @@ def get_prediction_proba(docx):
     return class_probabilities
 
 emotions_emoji_dict = {"positive": "🤗", "negative": "😠"}
-
-
-
 
 # Main function
 def main():
@@ -68,17 +64,16 @@ def main():
                 st.success("Prediction")
                 st.write("{}: {}".format(prediction, emoji_icon))
             with col2:
-               
                 st.success("Prediction Probability")
-                #st.write(probability)
-                class_labels = ['negative','positive'] 
-                proba_df = pd.DataFrame(probability,columns=class_labels)
+                class_labels = ['negative', 'positive']
+                proba_df = pd.DataFrame(probability, columns=class_labels)
                 st.write(proba_df.T)
                 proba_df_clean = proba_df.T.reset_index()
-                proba_df_clean.columns = ['emotions','probability']
+                proba_df_clean.columns = ['emotions', 'probability']
 
-                fig = alt.Chart(proba_df_clean).mark_bar().encode(x="emotions",y=alt.Y("probability", axis=alt.Axis(format='%')),color='emotions')
-                st.altair_chart(fig,use_container_width=True)
+                fig = alt.Chart(proba_df_clean).mark_bar().encode(x="emotions", y=alt.Y(
+                    "probability", axis=alt.Axis(format='%')), color='emotions')
+                st.altair_chart(fig, use_container_width=True)
     else:
         st.subheader("About")
 
