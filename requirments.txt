@@ -8,6 +8,6 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('punkt')
 streamlit 
-textblob
-vaderSentiment
 altair
+plotly
+tensorflow
